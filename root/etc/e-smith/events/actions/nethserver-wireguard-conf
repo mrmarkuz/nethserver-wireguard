@@ -1,0 +1,3 @@
+#!/bin/bash
+
+[[ ! -f /etc/wireguard/private.key ]] || wg genkey | tee /etc/wireguard/private.key | wg pubkey > /etc/wireguard/public.key
