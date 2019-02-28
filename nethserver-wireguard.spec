@@ -20,14 +20,11 @@ NethServer Wireguard integration
 
 %build
 perl createlinks
-mkdir -p root/var/lib/nethserver/zammad/backup
 
 %install
 rm -rf %{buildroot}
 (cd root; find . -depth -print | cpio -dump %{buildroot})
-%{genfilelist} \
-#  --dir /var/lib/nethserver/zammad/backup 'attr(755, postgres, postgres)' \
-%{buildroot} > %{name}-%{version}-filelist
+%{genfilelist} %{buildroot} > %{name}-%{version}-filelist
 
 %post
 
