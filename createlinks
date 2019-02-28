@@ -34,7 +34,7 @@ event_actions($event,
     'nethserver-wireguard-conf' => '02' #must be executed before template expansion
 );
 event_templates($event, 
-    '/etc/wireguard/server.conf',
+    '/etc/wireguard/wg0.conf',
     '/etc/sysctl.d/wireguard.conf'
 );
 
