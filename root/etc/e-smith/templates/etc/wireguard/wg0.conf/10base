@@ -1,8 +1,8 @@
 [Interface]
 Address = { $wireguard{Address} }
 ListenPort = { $wireguard{TCPPort} }
-PostUp = iptables -A FORWARD -i wg0 -j ACCEPT; iptables -t nat -A POSTROUTING -$
-PostDown = iptables -D FORWARD -i wg0 -j ACCEPT; iptables -t nat -D  POSTROUTIN$
+PostUp = iptables -A FORWARD -i wg0 -j ACCEPT; iptables -t nat -A POSTROUTING -o { $wireguard{Interface} } -j MASQUERADE
+PostDown = iptables -D FORWARD -i wg0 -j ACCEPT; iptables -t nat -D POSTROUTING -o { $wireguard{Interface} } -j MASQUERADE
 PrivateKey = { `cat /etc/wireguard/private.key` }
 SaveConfig = true
 
