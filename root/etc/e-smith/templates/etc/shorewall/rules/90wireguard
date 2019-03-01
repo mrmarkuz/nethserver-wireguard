@@ -1,0 +1,2 @@
+ACCEPT $FW wg
+ACCEPT wg $FW

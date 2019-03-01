@@ -24,7 +24,7 @@ use strict;
 use esmith::Build::CreateLinks  qw(:all);
 
 #--------------------------------------------------
-# actions for nethserver-postgresql-update event
+# actions for nethserver-wireguard-update event
 #--------------------------------------------------
 
 my $event = "nethserver-wireguard-update";
@@ -35,7 +35,10 @@ event_actions($event,
 );
 event_templates($event, 
     '/etc/wireguard/wg0.conf',
-    '/etc/sysctl.d/wireguard.conf'
+    '/etc/sysctl.d/wireguard.conf',
+    '/etc/shorewall/zones',
+    '/etc/shorewall/interfaces',
+    '/etc/shorewall/rules'
 );
 
 event_services($event, 
