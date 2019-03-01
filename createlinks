@@ -27,7 +27,7 @@ use esmith::Build::CreateLinks  qw(:all);
 # actions for nethserver-postgresql-update event
 #--------------------------------------------------
 
-my $event = "nethserver-zammad-update";
+my $event = "nethserver-wireguard-update";
 
 event_actions($event, 
     'initialize-default-databases' => '00',
