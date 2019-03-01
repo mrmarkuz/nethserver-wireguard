@@ -42,7 +42,8 @@ event_templates($event,
 );
 
 event_services($event, 
-    'wg-quick@wg0' => 'restart'
+    'wg-quick@wg0' => 'restart',
+    'shorewall' => 'reload'
 #    'httpd' => 'restart',
 #    'zammad' => 'restart',
 #    'elasticsearch' => 'restart',
