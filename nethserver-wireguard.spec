@@ -20,7 +20,6 @@ NethServer Wireguard integration
 
 %build
 perl createlinks
-mkdir -p root/etc/wireguard
 
 %install
 rm -rf %{buildroot}
