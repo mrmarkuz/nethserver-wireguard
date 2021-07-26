@@ -38,16 +38,13 @@ event_templates($event,
     '/etc/sysctl.d/wireguard.conf',
     '/etc/shorewall/zones',
     '/etc/shorewall/interfaces',
-    '/etc/shorewall/rules'
+    '/etc/shorewall/rules',
+    '/etc/shorewall/policy'
 );
 
 event_services($event, 
-    'wg-quick@wg0' => 'restart',
+    'wg-quick@' => 'restart',
     'shorewall' => 'reload'
-#    'httpd' => 'restart',
-#    'zammad' => 'restart',
-#    'elasticsearch' => 'restart',
-#    'postgresql' => 'restart'
 );
 
 #--------------------------------------------------

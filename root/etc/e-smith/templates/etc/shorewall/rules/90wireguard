@@ -1,2 +1,3 @@
-ACCEPT $FW wg
 ACCEPT wg $FW
+ACCEPT loc wg
+ACCEPT wg loc

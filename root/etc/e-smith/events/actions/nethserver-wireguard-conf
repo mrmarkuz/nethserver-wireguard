@@ -1,4 +1,59 @@
-#!/bin/bash
+#!/usr/bin/perl
 
-[[ ! -f /etc/wireguard/private.key ]] && wg genkey | tee /etc/wireguard/private.key | wg pubkey > /etc/wireguard/public.key
-chmod 700 /etc/wireguard/server-*.key /etc/wireguard/*.conf
+use esmith::ConfigDB;
+
+my $event = shift;
+
+my $idb = esmith::ConfigDB->open_ro('interfaces') || die("Can't open interfaces db");
+my $pdb = esmith::ConfigDB->open_ro('peers') || die("Can't open peers db");
+my $ports = '';
+
+
+foreach my $if ($idb->get_all(type => 'interface')) {
+    my $interface = $if->key;
+    my $address = $if->prop('address');
+    my $listenport = $if->prop('listenport');
+    my $status = $if->prop('status') || 'disabled';
+    next if ($status eq 'disabled');
+
+    if ($ports eq '') { $ports=$listenport; } else { $ports=$ports.','.$listenport; }
+    open(FH, '>', "/etc/wireguard/$interface.conf") or die $!;
+    print FH "[Interface]
+Address = $address
+ListenPort = $listenport
+PreDown = ip addr flush dev $interface
+";
+
+
+    system("[[ ! -f /etc/wireguard/private_$interface.key ]] && wg genkey | tee /etc/wireguard/private_$interface.key | wg pubkey > /etc/wireguard/public_$interface.key");
+
+    open my $fh, '<', "/etc/wireguard/private_".$interface.".key" or die "Can't open file $!";
+    my $privatekey = do { local $/; <$fh> };
+    print FH "PrivateKey = $privatekey\n\n";
+
+    system("wg-quick down $interface");
+
+    foreach my $pe ($pdb->get_all(type => 'peer')) {
+        my $publickey = $pe->prop('publickey') || '';
+        my $psk = $pe->prop('psk') || '';
+        my $allowedips = $pe->prop('allowedips') || '';
+        my $keepalive = $pe->prop('keepalive') || '';
+        my $endpoint = $pe->prop('endpoint');
+        my $status1 = $pe->prop('status');
+        my $interface1 = $pe->prop('interface');
+        next if !(($status1 eq 'enabled') && ($interface eq $interface1) && ($allowedips ne '') && ($publickey ne '') && ($endpoint ne ''));
+        print FH "[Peer]
+PublicKey = $publickey
+AllowedIPs = $allowedips
+Endpoint = $endpoint
+";
+        if ($keepalive ne '') { print FH "PersistentKeepalive = $keepalive\n"; }
+        if ($psk ne '') { print FH "PresharedKey = $psk\n"; }
+    }
+    close(FH);
+    system("chmod 700 /etc/wireguard/private_*.key /etc/wireguard/*.conf");
+    system("wg-quick up $interface");
+}
+
+
+system("config setprop wireguard UDPPorts $ports status enabled");

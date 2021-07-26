@@ -36,3 +36,5 @@ rm -rf %{buildroot}
 %dir %{_nseventsdir}/%{name}-update
 
 %changelog
+* Tue Jul 27 2021 Markus Neuberger <dev@markusneuberger.at> - 1.0.0-1
+  - Initial release

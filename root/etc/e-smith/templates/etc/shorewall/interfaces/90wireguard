@@ -1,1 +1,3 @@
-wg wg0 optional
+# Wireguard interface
+
+wg wg+ optional

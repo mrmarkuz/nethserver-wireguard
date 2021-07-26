@@ -1,0 +1,5 @@
+# Wireguard policy
+
+wg net  ACCEPT
+$FW wg  DROP
+wg $FW  DROP
