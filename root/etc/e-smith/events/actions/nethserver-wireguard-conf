@@ -22,7 +22,7 @@ Address = $address
 ListenPort = $listenport
 PreDown = ip addr flush dev $interface
 ";
-    if (routeif ne '') {
+    if ($routeif ne '') {
         print FH "PostUp = iptables -A FORWARD -i $interface -j ACCEPT; iptables -A FORWARD -i $interface -j ACCEPT; iptables -t nat -A POSTROUTING -o $routeif -j MASQUERADE
 PostDown = iptables -D FORWARD -i $interface -j ACCEPT; iptables -D FORWARD -i $interface -j ACCEPT; iptables -t nat -D POSTROUTING -o $routeif -j MASQUERADE\n";
     }
