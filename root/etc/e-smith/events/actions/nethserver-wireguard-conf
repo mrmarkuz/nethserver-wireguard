@@ -11,9 +11,10 @@ my $pdb = esmith::ConfigDB->open_ro('peers') || die("Can't open peers db");
 foreach my $if ($idb->get_all(type => 'interface')) {
     my $interface = $if->key;
     my $address = $if->prop('address');
-    my $listenport = $if->prop('listenport');
+    my $listenport = $if->prop('listenport') || '51820';
+    my $routeif = $if->prop('routeif') || '';
     my $status = $if->prop('status') || 'disabled';
-    next if ($status eq 'disabled');
+    next if (($status eq 'disabled') && ($address ne ''));
 
     open(FH, '>', "/etc/wireguard/$interface.conf") or die $!;
     print FH "[Interface]
@@ -21,7 +22,10 @@ Address = $address
 ListenPort = $listenport
 PreDown = ip addr flush dev $interface
 ";
-
+    if (routeif ne '') {
+        print FH "PostUp = iptables -A FORWARD -i $interface -j ACCEPT; iptables -A FORWARD -i $interface -j ACCEPT; iptables -t nat -A POSTROUTING -o $routeif -j MASQUERADE
+PostDown = iptables -D FORWARD -i $interface -j ACCEPT; iptables -D FORWARD -i $interface -j ACCEPT; iptables -t nat -D POSTROUTING -o $routeif -j MASQUERADE\n";
+    }
 
     system("[[ ! -f /etc/wireguard/private_$interface.key ]] && wg genkey | tee /etc/wireguard/private_$interface.key | wg pubkey > /etc/wireguard/public_$interface.key");
 
