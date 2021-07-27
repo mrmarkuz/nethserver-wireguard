@@ -23,7 +23,7 @@ ListenPort = $listenport
 PreDown = ip addr flush dev $interface
 ";
     if ($routeif ne '') {
-        print FH "PostUp = iptables -A FORWARD -i $interface -j ACCEPT; iptables -A FORWARD -i $interface -j ACCEPT; iptables -t nat -A POSTROUTING -o $routeif -j MASQUERADE
+        print FH "PostUp = iptables -A FORWARD -i $interface -j ACCEPT; iptables -A FORWARD -i $interface -j ACCEPT; iptables -t nat -A POSTROUTING -o $routeif -j MASQUER$
 PostDown = iptables -D FORWARD -i $interface -j ACCEPT; iptables -D FORWARD -i $interface -j ACCEPT; iptables -t nat -D POSTROUTING -o $routeif -j MASQUERADE\n";
     }
 
@@ -33,7 +33,7 @@ PostDown = iptables -D FORWARD -i $interface -j ACCEPT; iptables -D FORWARD -i $
     my $privatekey = do { local $/; <$fh> };
     print FH "PrivateKey = $privatekey\n\n";
 
-    system("wg-quick down $interface");
+    system("systemctl stop wg-quick\@$interface");
 
     system("config set wg-quick\@$interface service UDPPort $listenport access green,red status $status");
 
@@ -56,5 +56,5 @@ Endpoint = $endpoint
     }
     close(FH);
     system("chmod 700 /etc/wireguard/private_*.key /etc/wireguard/*.conf");
-    system("wg-quick up $interface");
+    system("systemctl start wg-quick\@$interface");
 }

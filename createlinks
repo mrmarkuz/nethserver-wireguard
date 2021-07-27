@@ -12,6 +12,7 @@ my $event = "nethserver-wireguard-update";
 event_actions($event, 
     'initialize-default-databases' => '00',
     'nethserver-wireguard-conf' => '02',
+    `runlevel-adjust' => '70',
     'firewall-adjust' => '80'
 );
 
