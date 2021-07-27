@@ -6,7 +6,6 @@ my $event = shift;
 
 my $idb = esmith::ConfigDB->open_ro('interfaces') || die("Can't open interfaces db");
 my $pdb = esmith::ConfigDB->open_ro('peers') || die("Can't open peers db");
-my $ports = '';
 
 
 foreach my $if ($idb->get_all(type => 'interface')) {
@@ -16,7 +15,6 @@ foreach my $if ($idb->get_all(type => 'interface')) {
     my $status = $if->prop('status') || 'disabled';
     next if ($status eq 'disabled');
 
-    if ($ports eq '') { $ports=$listenport; } else { $ports=$ports.','.$listenport; }
     open(FH, '>', "/etc/wireguard/$interface.conf") or die $!;
     print FH "[Interface]
 Address = $address
@@ -32,6 +30,8 @@ PreDown = ip addr flush dev $interface
     print FH "PrivateKey = $privatekey\n\n";
 
     system("wg-quick down $interface");
+
+    system("config set wg-quick\@$interface service UDPPort $listenport access green,red status $status");
 
     foreach my $pe ($pdb->get_all(type => 'peer')) {
         my $publickey = $pe->prop('publickey') || '';
@@ -54,6 +54,3 @@ Endpoint = $endpoint
     system("chmod 700 /etc/wireguard/private_*.key /etc/wireguard/*.conf");
     system("wg-quick up $interface");
 }
-
-
-system("config setprop wireguard UDPPorts $ports status enabled");

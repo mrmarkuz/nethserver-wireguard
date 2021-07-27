@@ -1,25 +1,5 @@
 #!/usr/bin/perl
 
-#
-# Copyright (C) 2013 Nethesis S.r.l.
-# http://www.nethesis.it - support@nethesis.it
-# 
-# This script is part of NethServer.
-# 
-# NethServer is free software: you can redistribute it and/or modify
-# it under the terms of the GNU General Public License as published by
-# the Free Software Foundation, either version 3 of the License,
-# or any later version.
-# 
-# NethServer is distributed in the hope that it will be useful,
-# but WITHOUT ANY WARRANTY; without even the implied warranty of
-# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-# GNU General Public License for more details.
-# 
-# You should have received a copy of the GNU General Public License
-# along with NethServer.  If not, see <http://www.gnu.org/licenses/>.
-#
-
 use strict;
 use esmith::Build::CreateLinks  qw(:all);
 
@@ -31,10 +11,11 @@ my $event = "nethserver-wireguard-update";
 
 event_actions($event, 
     'initialize-default-databases' => '00',
-    'nethserver-wireguard-conf' => '02' #must be executed before template expansion
+    'nethserver-wireguard-conf' => '02',
+    'firewall-adjust' => '80'
 );
+
 event_templates($event, 
-    '/etc/wireguard/wg0.conf',
     '/etc/sysctl.d/wireguard.conf',
     '/etc/shorewall/zones',
     '/etc/shorewall/interfaces',
@@ -47,20 +28,3 @@ event_services($event,
     'shorewall' => 'reload'
 );
 
-#--------------------------------------------------
-# actions for pre-backup-data event
-#--------------------------------------------------
-
-#$event = 'pre-backup-data';
-
-#event_actions($event, 'nethserver-zammad-backup' => 50);
-
-#--------------------------------------------------
-# actions for post-restore-data event
-#--------------------------------------------------
-
-#$event = 'post-restore-data';
-
-#event_actions($event, 'nethserver-zammad-restore' => 50);
-
-#event_services($event, 'zammad' => 'restart');
