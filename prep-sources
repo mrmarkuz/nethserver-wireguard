@@ -1,0 +1,20 @@
+#!/bin/bash
+
+# Get source code - Remove wg-manager to recreate tarball
+if [ ! -d "wg-manager" ]; then
+  git clone https://github.com/perara/wg-manager.git
+  cd wg-manager/wg-manager-frontend
+  # Install frontend
+  scl enable rh-nodejs14 'npm install --unsafe-perm > /dev/null && npm install @angular/cli > /dev/null; node_modules/@angular/cli/bin/ng build --configuration="production"'
+  mv dist ../wg-manager-backend/build
+  cd ../..
+fi
+
+# Create tarball
+tarball=wg-manager.tar.gz
+bdir=$(mktemp -d -p .)
+trap "rm -rf ${bdir}" EXIT
+
+cp -a wg-manager/wg-manager-backend/* ${bdir}
+
+tar -C ${bdir} -c -z -f ${tarball} . && echo "[INFO] created ${tarball}"

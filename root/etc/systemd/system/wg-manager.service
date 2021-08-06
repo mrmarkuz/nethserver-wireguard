@@ -1,0 +1,16 @@
+[Unit]
+Description=WireGuard Manager
+After=syslog.target
+After=network.target
+
+[Service]
+Type=single
+Environment=ADMIN_USERNAME=admin
+Environment=ADMIN_PASSWORD=admin
+WorkingDirectory=/opt/wg-manager
+ExecStart=/opt/wg-manager/venv/bin/gunicorn -k uvicorn.workers.UvicornWorker -b 127.0.0.1:8000 main:app
+User=wg-manager
+Restart=always
+
+[Install]
+WantedBy=multi-user.target

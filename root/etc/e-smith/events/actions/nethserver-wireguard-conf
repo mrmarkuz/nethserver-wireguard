@@ -1,62 +1,7 @@
-#!/usr/bin/perl
+#!/usr/bin/bash
 
-use esmith::ConfigDB;
-
-my $event = shift;
-
-my $idb = esmith::ConfigDB->open_ro('interfaces') || die("Can't open interfaces db");
-my $pdb = esmith::ConfigDB->open_ro('peers') || die("Can't open peers db");
-
-system("rm -rf /etc/e-smith/db/configuration/wg-quick*");
-
-foreach my $if ($idb->get_all(type => 'interface')) {
-    my $interface = $if->key;
-    my $address = $if->prop('address');
-    my $listenport = $if->prop('listenport') || '51820';
-    my $routeif = $if->prop('routeif') || '';
-    my $status = $if->prop('status') || 'disabled';
-    next if (($status eq 'disabled') && ($address ne ''));
-
-    open(FH, '>', "/etc/wireguard/$interface.conf") or die $!;
-    print FH "[Interface]
-Address = $address
-ListenPort = $listenport
-PreDown = ip addr flush dev $interface
-";
-    if ($routeif ne '') {
-        print FH "PostUp = iptables -A FORWARD -i $interface -j ACCEPT; iptables -A FORWARD -i $interface -j ACCEPT; iptables -t nat -A POSTROUTING -o $routeif -j MASQUERADE
-PostDown = iptables -D FORWARD -i $interface -j ACCEPT; iptables -D FORWARD -i $interface -j ACCEPT; iptables -t nat -D POSTROUTING -o $routeif -j MASQUERADE\n";
-    }
-
-    system("[[ ! -f /etc/wireguard/private_$interface.key ]] && wg genkey | tee /etc/wireguard/private_$interface.key # | wg pubkey > /etc/wireguard/public_$interface.key");
-
-    open my $fh, '<', "/etc/wireguard/private_".$interface.".key" or die "Can't open file $!";
-    my $privatekey = do { local $/; <$fh> };
-    print FH "PrivateKey = $privatekey\n\n";
-
-    system("config set wg-quick\@$interface service UDPPort $listenport access green,red status $status");
-    system("mkdir -p /etc/e-smith/db/configuration/defaults/wg-quick\@$interface");
-    system("echo service > /etc/e-smith/db/configuration/defaults/wg-quick\@$interface/type");
-    system("echo green,red > /etc/e-smith/db/configuration/defaults/wg-quick\@$interface/access");
-    system("echo enabled > /etc/e-smith/db/configuration/defaults/wg-quick\@$interface/status");
-    foreach my $pe ($pdb->get_all(type => 'peer')) {
-        my $publickey = $pe->prop('publickey') || '';
-        my $psk = $pe->prop('psk') || '';
-        my $allowedips = $pe->prop('allowedips') || '';
-        my $keepalive = $pe->prop('keepalive') || '';
-        my $endpoint = $pe->prop('endpoint');
-        my $status1 = $pe->prop('status');
-        my $interface1 = $pe->prop('interface');
-        next if !(($status1 eq 'enabled') && ($interface eq $interface1) && ($allowedips ne '') && ($publickey ne '') && ($endpoint ne ''));
-        print FH "[Peer]
-PublicKey = $publickey
-AllowedIPs = $allowedips
-Endpoint = $endpoint
-";
-        if ($keepalive ne '') { print FH "PersistentKeepalive = $keepalive\n"; }
-        if ($psk ne '') { print FH "PresharedKey = $psk\n"; }
-    }
-    close(FH);
-    system("chmod 600 /etc/wireguard/private_*.key /etc/wireguard/*.conf");
-}
-
+# Prepare python environment and install requirements and gunicorn
+if [ ! -d /opt/wg-manager/venv ]; then
+  cd /opt/wg-manager
+  su wg-manager -c "/opt/rh/rh-python38/root/usr/bin/python3.8 -m venv venv && source venv/bin/activate && pip3 install --upgrade pip && pip3 install -r requirements.txt && pip3 install gunicorn"
+fi

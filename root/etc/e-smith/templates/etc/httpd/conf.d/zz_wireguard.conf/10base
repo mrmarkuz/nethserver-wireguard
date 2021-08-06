@@ -1,0 +1,25 @@
+#
+# WireGuard httpd conf
+#
+
+<VirtualHost *:80>
+    IncludeOptional conf.d/default-virtualhost.inc
+</VirtualHost>
+
+<VirtualHost *:80>
+   ServerName { ${"wg-manager"}{VirtualHost} || 'localhost' }
+   RedirectMatch 301 ^(?!/\.well-known/acme-challenge/).* https://{ ${"wg-manager"}{VirtualHost} || 'localhost' }
+</VirtualHost>
+
+<VirtualHost *:443>
+   ServerName { ${"wg-manager"}{VirtualHost} || 'localhost' }
+
+   SSLEngine on
+   SSLProxyEngine on
+   ProxyPreserveHost On
+
+   RewriteEngine on
+
+   ProxyPass / http://127.0.0.1:8000/
+   ProxyPassReverse / http://127.0.0.1:8000/
+</VirtualHost>
