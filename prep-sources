@@ -24,4 +24,4 @@ cp -a wg-manager/wg-manager-backend/* ${bdir}
 tar -C ${bdir} -c -z -f ${tarball} . && echo "[INFO] created ${tarball}"
 
 # Remove wg-manager source
-rm -rf wg-manager
+#rm -rf wg-manager
