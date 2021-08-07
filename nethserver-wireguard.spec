@@ -30,6 +30,14 @@ rm -rf %{buildroot}
 mkdir -p %{buildroot}/opt/wg-manager
 tar xvf %{SOURCE1} -C %{buildroot}/opt/wg-manager/
 
+mkdir -p %{buildroot}/usr/share/cockpit/nethserver/applications/
+mkdir -p %{buildroot}/usr/libexec/nethserver/api/%{name}/
+mkdir -p %{buildroot}/usr/share/cockpit/%{name}/
+
+cp -a %{name}.json %{buildroot}/usr/share/cockpit/nethserver/applications/
+cp -a api/* %{buildroot}/usr/libexec/nethserver/api/%{name}/
+cp -a ui/* %{buildroot}/usr/share/cockpit/%{name}/
+
 %{genfilelist} %{buildroot} | grep -v -e '/opt/wg-manager' > %{name}-%{version}-filelist
 
 # don't compile python

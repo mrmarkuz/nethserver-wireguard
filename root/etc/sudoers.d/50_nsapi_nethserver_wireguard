@@ -1,0 +1,7 @@
+#
+# nsapi_nethserver_wireguard
+#
+Cmnd_Alias NSAPI_NETHSERVER_WIREGUARD = \
+    /usr/libexec/nethserver/api/nethserver-wireguard/read
+
+Defaults!NSAPI_NETHSERVER_WIREGUARD !requiretty

@@ -1,0 +1,19 @@
+{
+  "id": "nethserver-wireguard",
+  "name": "WireGuard",
+  "summary": "Nethserver integration of WireGuard",
+  "description": "Aa fast, modern and secure VPN tunnel",
+  "url": "",
+  "provides": ["nethserver-wireguard"],
+  "release": {
+    "version": "0.0.1"
+  },
+  "author": {
+    "name": "Markus Neuberger"
+  },
+  "infoapi": {
+    "path": "nethserver-wireguard/read"
+  },
+  "icon": "logo.png",
+  "external": true
+}
