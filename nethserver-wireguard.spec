@@ -53,7 +53,6 @@ exit 0
 %dir %{_nseventsdir}/%{name}-update
 %config %attr (0440,root,root) %{_sysconfdir}/sudoers.d/90_wg-manager
 %config %attr (0775,root,root) /usr/libexec/nethserver/api/%{name}/read
-%config %attr (0664,root,root) %{_sysconfdir}/systemd/system/wg-manager.service
 %dir %attr(0755,wg-manager,wg-manager) /opt/wg-manager
 %attr(-,wg-manager,wg-manager) /opt/wg-manager
 

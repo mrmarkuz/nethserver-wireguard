@@ -1,5 +1,8 @@
 #!/usr/bin/bash
 
+# Create alphanumeric password because wg-manager has issues with some special chars
+[ ! -f /var/lib/nethserver/secrets/wg-manager ] && echo `date +%s | sha256sum | base64 | head -c 32` > /var/lib/nethserver/secrets/wg-manager
+
 # Prepare python environment and install requirements and gunicorn
 if [ ! -d /opt/wg-manager/venv ]; then
   cd /opt/wg-manager

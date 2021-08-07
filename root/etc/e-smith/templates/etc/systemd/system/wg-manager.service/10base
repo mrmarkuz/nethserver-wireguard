@@ -4,9 +4,9 @@ After=syslog.target
 After=network.target
 
 [Service]
-Type=single
-Environment=ADMIN_USERNAME=admin
-Environment=ADMIN_PASSWORD=admin
+Type=simple
+Environment=ADMIN_USERNAME=wg-manager
+Environment=ADMIN_PASSWORD={ use NethServer::Password; NethServer::Password::store('wg-manager'); }
 WorkingDirectory=/opt/wg-manager
 ExecStart=/opt/wg-manager/venv/bin/gunicorn -k uvicorn.workers.UvicornWorker -b 127.0.0.1:8000 main:app
 User=wg-manager

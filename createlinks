@@ -20,10 +20,12 @@ event_templates($event,
     '/etc/shorewall/interfaces',
     '/etc/shorewall/rules',
     '/etc/shorewall/policy',
-    '/etc/httpd/conf.d/zz_wireguard.conf'
+    '/etc/httpd/conf.d/zz_wireguard.conf',
+    '/etc/systemd/system/wg-manager.service'
 );
 
 event_services($event, 
+    'httpd' => 'reload',
     'shorewall' => 'reload'
 );
 
