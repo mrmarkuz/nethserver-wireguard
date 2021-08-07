@@ -2,7 +2,7 @@
   "id": "nethserver-wireguard",
   "name": "WireGuard",
   "summary": "Nethserver integration of WireGuard",
-  "description": "Aa fast, modern and secure VPN tunnel",
+  "description": "A fast, modern and secure VPN tunnel",
   "url": "",
   "provides": ["nethserver-wireguard"],
   "release": {

@@ -3,7 +3,11 @@
 # Get source code - Remove wg-manager to recreate tarball
 if [ ! -d "wg-manager" ]; then
   git clone https://github.com/perara/wg-manager.git
-  cd wg-manager/wg-manager-frontend
+  cd wg-manager
+  # include LDAP PR
+  #git fetch origin pull/110/head:ldap
+  #git checkout ldap
+  cd wg-manager-frontend
   # Install frontend
   scl enable rh-nodejs14 'npm install --unsafe-perm > /dev/null && npm install @angular/cli > /dev/null; node_modules/@angular/cli/bin/ng build --configuration="production"'
   mv dist ../wg-manager-backend/build
