@@ -1,7 +1,7 @@
 Summary: NethServer wireguard integration
 Name: nethserver-wireguard
 Version: 1.0.0
-Release: 1%{?dist}
+Release: 2%{?dist}
 License: GPL
 URL: %{url_prefix}/%{name}
 Source0: %{name}-%{version}.tar.gz
@@ -53,6 +53,7 @@ exit 0
 %dir %{_nseventsdir}/%{name}-update
 %config %attr (0440,root,root) %{_sysconfdir}/sudoers.d/90_wg-manager
 %config %attr (0775,root,root) /usr/libexec/nethserver/api/%{name}/read
+%config %attr (0660,root,root) %{_sysconfdir}/systemd/system/wg-manager
 %dir %attr(0755,wg-manager,wg-manager) /opt/wg-manager
 %attr(-,wg-manager,wg-manager) /opt/wg-manager
 
